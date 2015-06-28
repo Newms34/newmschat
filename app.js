@@ -38,7 +38,8 @@ io.on('connection', function(socket) {
     socket.on('regNewUser', function(emptyObj) {
         var aLen = adjs.length;
         var nLen = nouns.length;
-        var userName = adjs[Math.floor(Math.random() * aLen)] + ' '+nouns[Math.floor(Math.random() * nLen)];
+        var userName='';
+        userName = adjs[Math.floor(Math.random() * aLen)] + ' '+nouns[Math.floor(Math.random() * nLen)];
         io.emit('userRegged', {
             newName: userName
         });

@@ -40,5 +40,4 @@ app.controller("MainController", function($scope, $window) {
         $scope.$apply();
         $('#chatLog').focus();
     });
-
 });

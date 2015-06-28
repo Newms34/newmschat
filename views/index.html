@@ -11,7 +11,7 @@
         <div id='chatWindow'>
         Your name: {{userName}}.
             <div id='chatLog'>
-                <div class = 'chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.indexOf(userName)==0}'>{{line}}</div>
+                <div class = 'chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.indexOf(userName)==0}'>{{line.txt}}</div>
             </div>
             <input type='text' id='chatInp'/> <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
         </div>

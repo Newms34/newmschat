@@ -1,0 +1,27 @@
+<!Doctype html>
+<html>
+
+<head>
+    <title>Zoom</title>
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/stylesheets/style.css" rel="stylesheet" />
+</head>
+
+<body id="homepage"ng-app = 'Chat' ng-controller = 'MainController'>
+        <div id='chatWindow'>
+        Your name: {{userName}}.
+            <div id='chatLog'>
+                <div class = 'chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.indexOf(userName)==0}'>{{line}}</div>
+            </div>
+            <input type='text' id='chatInp'/> <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
+        </div>
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src='/angular/angular.js'></script>
+    <script src='/js/controllers/MainController.js'></script>
+    <script src='/js/factories/socket.js'></script>
+    
+</body>
+
+</html>

@@ -27,22 +27,10 @@ app.use('/', routes);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 //following generates a random name for each new user.
-var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August'];
-var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle'];
-
 io.on('connection', function(socket) {
     socket.on('chatIn', function(words) {
         //Do stuff!
         io.emit('chatOut', words); //write words!
-    });
-    socket.on('regNewUser', function(emptyObj) {
-        var aLen = adjs.length;
-        var nLen = nouns.length;
-        var userName='';
-        userName = adjs[Math.floor(Math.random() * aLen)] + ' '+nouns[Math.floor(Math.random() * nLen)];
-        io.emit('userRegged', {
-            newName: userName
-        });
     });
 });
 

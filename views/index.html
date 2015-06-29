@@ -9,18 +9,31 @@
 
 <body id="homepage" ng-app='Chat' ng-controller='MainController'>
     <div id='chatWindow'>
-        Your name: {{userName}}.
+        <h2>Your name: {{userName}}</h2>
         <div id='chatLog'>
             <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0}' ng-bind-html='line.txt'></div>
         </div>
         <input type='text' id='chatInp' />
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
-        <hr/>
-        <ol>
-            <li>Type in box above.</li>
+        <div id='inst'>
+            <h3>Instructions!</h3>
+            <li>Type in box the light green textbox.</li>
             <li>Press enter or click blue button</li>
-            <li>Type '/wiki' followed by some text to create a wikipedia link</li>
-        </ol>
+            <li>Commands:
+                <ul>
+                    <li>/wiki: Create a Wikipedia link</li>
+                    <li>/block: add a user to your block list</li>
+                    <li>/unblock: remove a user from your block list</li>
+                </ul>
+            </li>
+        </div>
+        <div id='blocked'>Blocked Users:
+            <hr/>
+            <div ng-if='blockUser.length<1'>No blocked users yet!</div>
+            <ul>
+                <li ng-repeat='badUser in blockUser'>{{badUser}}</li>
+            </ul>
+        </div>
     </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>

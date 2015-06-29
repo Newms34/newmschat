@@ -33,5 +33,27 @@ html, body {
     overflow-y:scroll;
 }
 #chatInp{
+    background-color:#cfc;
     width:40%;
+}
+#blocked{
+    right:3%;
+    width:30%;
+    background-color: #aaa;
+    color:#000;
+    position: absolute;
+    top:3%;
+}
+#inst{
+    padding:10px;
+    right:3%;
+    width:30%;
+    background-color: #aaa;
+    background-color:#ccf;
+    color:#000;
+    position: absolute;
+    bottom:5%;
+}
+#inst > li > ul > li{
+    background-color:#bbe;
 }

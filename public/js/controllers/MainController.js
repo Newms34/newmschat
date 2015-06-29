@@ -1,6 +1,6 @@
 var app = angular.module("Chat", ['ngSanitize']);
-var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy'];
-var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle'];
+var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy','Big Bad'];
+var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle','Wolf'];
 
 
 var socket = io();
@@ -9,7 +9,9 @@ app.controller("MainController", function($scope, $window) {
     //on instantiation, create random 'user key'
     // $scope.userKey = Math.floor(Math.random()*999999999999).toString(26);//dont really need this
     $scope.userName = adjs[Math.floor(Math.random() * adjs.length)] + ' ' + nouns[Math.floor(Math.random() * nouns.length)];
-    $scope.blockUser = []
+    $scope.blockUser = [];
+    $scope.colCycle=false;
+    $scope.els;
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
         id: 0.12345
@@ -37,6 +39,10 @@ app.controller("MainController", function($scope, $window) {
         } else if (text.indexOf('/unblock ') === 0) {
             $scope.blockEm(text.replace('/unblock ', ''), 1);
             return 0;
+        }else if (text.indexOf('/col')===0){
+            $scope.els= document.getElementsByTagName('div');
+            $scope.hueCycle($scope.els);
+            return 0;
         } else if (text === '') {
             return 0;
         } else if (text.indexOf('<') != -1 || text.indexOf('>') != -1) {
@@ -54,7 +60,29 @@ app.controller("MainController", function($scope, $window) {
             });
         }
         $('#chatInp').val('');
-
+    };
+    $scope.hueTimer;
+    $scope.hueOff=0;
+    $scope.hueCycle = function(els){
+        if (!$scope.colCycle){
+            $scope.hueTimer = setInterval(function(){
+                $scope.hueOff+=20;
+                for (var j=0;j<els.length;j++){
+                    var theHue = ((j*20)+$scope.hueOff)%360;
+                    console.log(els[j].id)
+                    $('#'+els[j].id).css({
+                        'filter':'hue-rotate('+theHue+'deg)',
+                        '-webkit-filter':'hue-rotate('+theHue+'deg)'
+                        // 'transform':'rotate('+theHue+'deg)'
+                    });
+                }
+            },100);
+            $scope.colCycle=true;
+        }else{
+            clearInterval($scope.hueTimer);
+            $scope.colCycle=false;
+        }
+        $('#chatInp').val('');
     };
     $scope.blockEm = function(text, mode) {
         if (!mode) {

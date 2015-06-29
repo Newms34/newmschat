@@ -7,28 +7,27 @@
     <link href="/stylesheets/style.css" rel="stylesheet" />
 </head>
 
-<body id="homepage"ng-app = 'Chat' ng-controller = 'MainController'>
-        <div id='chatWindow'>
+<body id="homepage" ng-app='Chat' ng-controller='MainController'>
+    <div id='chatWindow'>
         Your name: {{userName}}.
-            <div id='chatLog'>
-                <div class = 'chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0}' ng-bind-html='line.txt'></div>
-            </div>
-            <input type='text' id='chatInp'/> <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
+        <div id='chatLog'>
+            <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0}' ng-bind-html='line.txt'></div>
         </div>
+        <input type='text' id='chatInp' />
+        <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
         <hr/>
         <ol>
             <li>Type in box above.</li>
             <li>Press enter or click blue button</li>
             <li>Type '/wiki' followed by some text to create a wikipedia link</li>
         </ol>
-
+    </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src='/angular/angular.js'></script>
     <script src='/angular-sanitize/angular-sanitize.js'></script>
     <script src='/js/controllers/MainController.js'></script>
     <script src='/js/factories/socket.js'></script>
-    
 </body>
 
 </html>

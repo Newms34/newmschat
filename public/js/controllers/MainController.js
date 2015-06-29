@@ -32,6 +32,8 @@ app.controller("MainController", function($scope, $window) {
         } else if (text.indexOf('/unblock ') === 0) {
             $scope.blockEm(text.replace('/unblock ', ''), 1);
             return 0;
+        } else if (text == '') {
+            return 0;
         }
         text = $scope.userName + ': ' + text;
         socket.emit('chatIn', {

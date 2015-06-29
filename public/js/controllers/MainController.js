@@ -1,6 +1,6 @@
 var app = angular.module("Chat", ['ngSanitize']);
-var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August','Enormous','Fluffy'];
-var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle','Tyrannosaurus','Orangutan','Wallaby','Aardvark','Noodle'];
+var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy'];
+var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle'];
 
 
 var socket = io();
@@ -37,6 +37,7 @@ app.controller("MainController", function($scope, $window) {
         socket.emit('chatIn', {
             chatText: text
         });
+        $('#chatInp').val('');
 
     };
     $scope.blockEm = function(text, mode) {
@@ -64,13 +65,12 @@ app.controller("MainController", function($scope, $window) {
                 id: Math.random()
             });
         }
-            $('#chatInp').val('');
-            var chatHeight = 31 * $scope.chatLines.length;
-            $('#chatLog').animate({
-                scrollTop: chatHeight
-            }, 100);
-            $('#chatLog').scrollTop(chatHeight);
-            $scope.$apply();
-            $('#chatLog').focus();
+        var chatHeight = 31 * $scope.chatLines.length;
+        $('#chatLog').animate({
+            scrollTop: chatHeight
+        }, 100);
+        $('#chatLog').scrollTop(chatHeight);
+        $scope.$apply();
+        $('#chatLog').focus();
     });
 });

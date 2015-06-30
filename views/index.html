@@ -9,7 +9,10 @@
 
 <body id="homepage" ng-app='Chat' ng-controller='MainController'>
     <div id='chatWindow'>
-        <h2>Your name: {{userName}}</h2>
+        <div id='nameBox'>
+            <h2>Your name: {{userName}}</h2>
+            <input type='checkbox' id='keepName' ng-model='keepName' ng-change='nameSave()' /> Keep this name
+        </div>
         <div id='chatLog'>
             <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
         </div>
@@ -21,18 +24,29 @@
             <li>Press enter or click blue button</li>
             <li>Commands:
                 <ul>
-                    <li>/wiki: Create a Wikipedia link</li>
-                    <li>/block: add a user to your block list</li>
-                    <li>/unblock: remove a user from your block list</li>
+                    <li>/wiki <i>word</i>: Create a Wikipedia link (to <i>word</i>)</li>
+                    <li>/block: Add a user to your block list</li>
+                    <li>/unblock: Remove a user from your block list</li>
+                    <li>/col: Fancy trippy color stuff. Whoa.</li>
+                    <li>/google <i>word</i>: Search Google for <i>word</i></li>
                 </ul>
             </li>
         </div>
-        <div id='blocked'>Blocked Users:
+        <div id='users'>Users Online:
             <hr/>
-            <div ng-if='blockUser.length<1'>No blocked users yet!</div>
-            <ul>
-                <li ng-repeat='badUser in blockUser'>{{badUser}}</li>
-            </ul>
+            <div id='okayUser'>
+                Users:
+                <div ng-if='allUsers.length<1'>Nobody's online! Hmm... This can't be right!</div>
+                <ul>
+                    <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1 && $index'>{{okayUser}}</li>
+                </ul>
+            </div><div id='blockedUser'>
+                Blocked:
+                <div ng-if='blockUser.length<1'>No blocked users yet!</div>
+                <ul>
+                    <li ng-repeat='badUser in blockUser'>{{badUser}}</li>
+                </ul>
+            </div>
         </div>
     </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>

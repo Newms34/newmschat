@@ -26,13 +26,54 @@ app.use('/', routes);
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var userList = [];
 //following generates a random name for each new user.
 io.on('connection', function(socket) {
     socket.on('chatIn', function(words) {
         //Do stuff!
         io.emit('chatOut', words); //write words!
     });
+    socket.on('pingServ', function(userUpd) {
+        //two options here: either create new user 'object', or reset timer from old user
+        var foundUser = -1;
+        for (var i = 0; i < userList.length; i++) {
+            if (userList[i].userId == userUpd.key) {
+                foundUser = i;
+            }
+        }
+        if (foundUser !== -1) {
+            //found a user at position i
+            userList[foundUser].userTimer = 40;
+            var outList = {
+                list: userList
+            };
+        } else {
+            //no user made yet, so create one
+            userList.push({
+                userName: userUpd.name,
+                userId: userUpd.key,
+                userTimer: 40
+            });
+        }
+    });
+
+    socket.on('getServUserData', function(emptyObj) {
+        //first, business logic to remove dead users
+        for (var p=0;p<userList.length;p++){
+            userList[p].userTimer--;
+            if (!userList[p].userTimer){
+                //user ded q.q
+                userList = userList.splice(p,1);
+            }
+        }
+        io.emit('servUserData', {list:userList});
+        // console.log(outList);
+    });
 });
+
+function removeUser(user) {
+    userList.splice(user, 1);
+}
 
 
 http.listen(process.env.PORT || 3000);

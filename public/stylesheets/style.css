@@ -1,61 +1,98 @@
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
-    margin:10px;
-    color:#fff;
-    background:url('/img/star.jpg');
+    margin: 10px;
+    background: url('/img/star.jpg');
 }
-.isMe{
-    font-weight:bold;
+
+.isMe {
+    font-weight: bold;
 }
-.chatWindowLine{
-    border-bottom:1px groove #aaa;
-    border-left:1px solid #fff;
-    border-right:1px solid #fff;
-    padding:3px;
+
+.chatWindowLine {
+    border-bottom: 1px groove #aaa;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    padding: 3px;
     background-color: #ccc;
-    color:#000;
+    color: #000;
 }
-#chatWindow{
-    width:90%;
-    height:90vh;
+
+#chatWindow {
+    width: 90%;
     border-radius: 2%;
-    position:fixed;
-    padding:5px;
-    background-color:rgba(100,100,100,.7);
+    position: fixed;
+    padding: 5px;
+    background-color: rgba(100, 100, 100, .7);
 }
-#chatLog{
-    width:50%;
-    height:300px;
+
+#chatLog {
+    width: 50%;
+    height: 300px;
     background-color: #fff;
-    margin-bottom:5px;
-    overflow-y:scroll;
+    margin-bottom: 5px;
+    overflow-y: scroll;
 }
-#chatInp{
-    background-color:#cfc;
-    width:40%;
+
+#chatInp {
+    background-color: #cfc;
+    width: 40%;
 }
-#blocked{
-    right:3%;
-    width:30%;
+
+#users {
+    right: 3%;
+    width: 30%;
     background-color: #aaa;
-    color:#000;
+    color: #000;
     position: absolute;
-    top:3%;
+    top: 3%;
+    height:200px;
 }
-#inst{
-    padding:10px;
-    right:3%;
-    width:30%;
+
+#blockedUser {
+    position: relative;
+    background-color:#cdd;
+    width:49%;
+    float:left;
+    display:inline-block;
+    height:90px;
+}
+
+#okayUser {
+    position:relative;
+    background-color: #cdc;
+    width:49%;
+    margin-right:1.5%;
+    float:left;
+    display:inline-block;
+    height:90px;
+}
+
+#inst {
+    padding: 10px;
+    right: 3%;
+    width: 30%;
     background-color: #aaa;
-    background-color:#ccf;
-    color:#000;
+    background-color: #ccf;
+    color: #000;
     position: absolute;
-    bottom:5%;
+    bottom: 5%;
 }
-#inst > li > ul > li{
-    background-color:#bbe;
+
+#inst > li > ul > li {
+    background-color: #bbe;
 }
-.sys{
+
+.sys {
     background-color: #eaa;
+}
+
+#nameBox {
+    background-color: #ccc;
+    padding: 5px;
+    border-radius: 3%;
+    position: relative;
+    width: 50%;
+    margin-bottom: 10px;
 }

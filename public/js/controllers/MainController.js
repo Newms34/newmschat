@@ -1,17 +1,16 @@
 var app = angular.module("Chat", ['ngSanitize']);
-var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy','Big Bad'];
-var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle','Wolf'];
+var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy', 'Big Bad'];
+var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle', 'Wolf'];
 
 
 var socket = io();
 
 app.controller("MainController", function($scope, $window) {
-    //on instantiation, create random 'user key'
-    // $scope.userKey = Math.floor(Math.random()*999999999999).toString(26);//dont really need this
     $scope.userName = adjs[Math.floor(Math.random() * adjs.length)] + ' ' + nouns[Math.floor(Math.random() * nouns.length)];
     $scope.blockUser = [];
-    $scope.colCycle=false;
+    $scope.colCycle = false;
     $scope.els;
+    $scope.allUsers = [];
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
         id: 0.12345
@@ -39,10 +38,17 @@ app.controller("MainController", function($scope, $window) {
         } else if (text.indexOf('/unblock ') === 0) {
             $scope.blockEm(text.replace('/unblock ', ''), 1);
             return 0;
-        }else if (text.indexOf('/col')===0){
-            $scope.els= document.getElementsByTagName('div');
+        } else if (text.indexOf('/col') === 0) {
+            $scope.els = document.getElementsByTagName('div');
             $scope.hueCycle($scope.els);
             return 0;
+        } else if (text.indexOf('/google') === 0) {
+            var stuffToGoogle = text.replace('/google ', '');
+            text = '<a href="https://www.google.com/search?q=' + stuffToGoogle + '" target="_blank">' + stuffToGoogle + '</a>';
+            text = $scope.userName + ': ' + text;
+            socket.emit('chatIn', {
+                chatText: text
+            });
         } else if (text === '') {
             return 0;
         } else if (text.indexOf('<') != -1 || text.indexOf('>') != -1) {
@@ -62,25 +68,25 @@ app.controller("MainController", function($scope, $window) {
         $('#chatInp').val('');
     };
     $scope.hueTimer;
-    $scope.hueOff=0;
-    $scope.hueCycle = function(els){
-        if (!$scope.colCycle){
-            $scope.hueTimer = setInterval(function(){
-                $scope.hueOff+=20;
-                for (var j=0;j<els.length;j++){
-                    var theHue = ((j*20)+$scope.hueOff)%360;
+    $scope.hueOff = 0;
+    $scope.hueCycle = function(els) {
+        if (!$scope.colCycle) {
+            $scope.hueTimer = setInterval(function() {
+                $scope.hueOff += 20;
+                for (var j = 0; j < els.length; j++) {
+                    var theHue = ((j * 20) + $scope.hueOff) % 360;
                     console.log(els[j].id)
-                    $('#'+els[j].id).css({
-                        'filter':'hue-rotate('+theHue+'deg)',
-                        '-webkit-filter':'hue-rotate('+theHue+'deg)'
-                        // 'transform':'rotate('+theHue+'deg)'
+                    $('#' + els[j].id).css({
+                        'filter': 'hue-rotate(' + theHue + 'deg)',
+                        '-webkit-filter': 'hue-rotate(' + theHue + 'deg)'
+                            // 'transform':'rotate('+theHue+'deg)'
                     });
                 }
-            },100);
-            $scope.colCycle=true;
-        }else{
+            }, 100);
+            $scope.colCycle = true;
+        } else {
             clearInterval($scope.hueTimer);
-            $scope.colCycle=false;
+            $scope.colCycle = false;
         }
         $('#chatInp').val('');
     };
@@ -116,5 +122,42 @@ app.controller("MainController", function($scope, $window) {
         $('#chatLog').scrollTop(chatHeight);
         $scope.$apply();
         $('#chatLog').focus();
+    });
+    //save the name
+    $scope.nameSave = function() {
+        ($scope.keepName) ? localStorage.newmsChatName = $scope.userName: localStorage.removeItem('newmsChatName');
+    };
+    //retrieve name if it exists
+    $scope.getName = function() {
+        if (localStorage.newmsChatName) {
+            //only run this bit if we already have a name
+            $scope.userName = localStorage.newmsChatName;
+            $scope.keepName = true;
+        }
+    };
+    $scope.getName();
+
+    //stuff for pinging server to let it know we're alive
+    $scope.uniqId = Math.floor(Math.random() * 9999999999).toString(26);
+    $scope.pingServ = setInterval(function() {
+        var userStatObj = {
+            name: $scope.userName,
+            key: $scope.uniqId
+        };
+        socket.emit('pingServ', userStatObj);
+        socket.emit('getServUserData', {
+            x: 1
+        });
+    }, 90);
+    socket.on('servUserData', function(users) {
+        $scope.allUsers = [''];
+        // users.list.forEach(function(usr){
+        //     $scope.allUsers.push(usr.list.userName);
+        // });
+        for (var q = 0; q < users.list.length; q++) {
+            $scope.allUsers.push(users.list[q].userName);
+        }
+        $scope.$digest();
+
     });
 });

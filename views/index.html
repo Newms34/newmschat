@@ -16,7 +16,7 @@
         <div id='chatLog'>
             <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
         </div>
-        <input type='text' id='chatInp' />
+        <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}'/>
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
         <div id='inst'>
             <h3>Instructions!</h3>
@@ -48,6 +48,24 @@
                 </ul>
             </div>
         </div>
+    </div>
+    <div class='updates' ng-class='{updatesSmall: updateShow==false}'>
+        <div id='updateToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
+        <br/>
+        <u>Latest Updates:</u>
+        <ul>
+            <li>Enter key now focuses on chatbox.</li>
+            <li>User can now scroll through list of previously-typed entries (max of 30).</li>
+            <li>Older entries in chat get deleted after a while, so that the chat window can only hold a max of 40 entries (this number may be changed later)</li>
+            <li>Implemented update window.</li>
+            <li>Refactored list of online users and list of blocked users</li>
+            <li>Chat commands (typing '/') now turns the chatbox blue.</li>
+        </ul>
+        <u>Future Features:</u>
+        <ul>
+            <li>AFK Timeout system: If user goes afk for a certain amount of time, grey out their name to signify that they might not respond.</li>
+            <li>More commands!</li>
+        </ul>
     </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>

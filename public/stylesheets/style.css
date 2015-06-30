@@ -39,6 +39,10 @@ body {
     background-color: #cfc;
     width: 40%;
 }
+.chatCmd{
+    /*buzz lightyear of chatcommand*/
+    background-color:#ccf!important;
+}
 
 #users {
     right: 3%;
@@ -95,4 +99,35 @@ body {
     position: relative;
     width: 50%;
     margin-bottom: 10px;
+}
+.updates{
+    width:90vw;
+    height:90vh;
+    position:fixed;
+    margin: auto auto;
+    background-color: #fed;
+    color:#000;
+    font-family: 'papyrus';
+    font-size:larger;
+    box-shadow: 4px 4px 7px #000;
+    overflow: hidden;
+}
+.updatesSmall{
+    width:19px;
+    height:19px;
+}
+#updateToggle{
+    position:absolute;
+    width:15px;
+    height:15px;
+    text-align: center;
+    font-weight: bold;
+    background-color: #780007;
+    color:#fff;
+    left:2px;
+    top:2px;
+    cursor:pointer;
+}
+#updateToggle:hover{
+    background-color: #b99;
 }

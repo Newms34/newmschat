@@ -10,6 +10,11 @@ app.controller("MainController", function($scope, $window) {
     $scope.blockUser = [];
     $scope.colCycle = false;
     $scope.els;
+    $scope.updateShow = false;
+    $scope.commanding = false;
+    $scope.focused = false;
+    $scope.textHist = [];
+    $scope.textHistNum = 0;
     $scope.allUsers = [];
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
@@ -18,12 +23,54 @@ app.controller("MainController", function($scope, $window) {
     console.log('generating name');
 
     window.onkeyup = function(e) {
-        if (e.which == 13) {
+        //first two focus and send message
+        //second two scroll thru previous entries
+        if (e.which == 13 && $scope.focused && !$scope.updateShow) {
+            e.preventDefault();
             $scope.speak();
+            $scope.focused = false;
+            $('#chatInp').blur();
+        } else if ((e.which == 13 || e.which == 191) && !$scope.focused) {
+            e.preventDefault();
+            $scope.focused = true;
+            if (e.which == 191) {
+                $('#chatInp').val('/');
+            }
+            $('#chatInp').focus();
+        } else if (e.which == 38 && $scope.textHistNum && $scope.textHist.length) {
+            e.preventDefault();
+            $scope.textHistNum--;
+            $('#chatInp').val($scope.textHist[$scope.textHistNum]);
+        } else if (e.which == 40 && $scope.textHistNum < $scope.textHist.length - 1 && $scope.textHist.length) {
+            //scroll down
+            e.preventDefault();
+            $scope.textHistNum++;
+            $('#chatInp').val($scope.textHist[$scope.textHistNum]);
+        }
+        var txt = $('#chatInp').val();
+        console.log(txt[0] == '/');
+        if (txt[0] == '/') {
+            $scope.commanding = true;
+        } else {
+            $scope.commanding = false;
         }
     };
+    $('#chatInp').focus(function() {
+        $scope.focused = true;
+    });
     $scope.speak = function() {
         var text = $('#chatInp').val();
+        if (text !== '' && text != ' ') {
+            //text not empty, add to list
+            $scope.textHist.pop();
+            $scope.textHist.push(text);
+            $scope.textHist.push('');
+            $scope.textHistNum = $scope.textHist.length - 1;
+            if ($scope.textHistNum > 30) {
+                $scope.textHist.shift().shift();
+                $scope.textHistNum -= 2;
+            }
+        }
         if (text.indexOf('/wiki ') === 0) {
             var stuffToWiki = text.replace('/wiki ', '');
             text = '<a href="http://en.wikipedia.org/wiki/' + stuffToWiki + '" target="_blank">' + stuffToWiki + '</a>';
@@ -91,11 +138,11 @@ app.controller("MainController", function($scope, $window) {
         $('#chatInp').val('');
     };
     $scope.blockEm = function(text, mode) {
-        if (!mode) {
+        if (!mode && $scope.allUsers.indexOf(text) != -1) {
+            //user exists and is online
             //add user to block list
             $scope.blockUser.push(text);
         } else if ($scope.blockUser.indexOf(text) != -1) {
-
             $scope.blockUser.splice($scope.blockUser.indexOf(text), 1);
         }
         $('#chatInp').val('');
@@ -114,6 +161,10 @@ app.controller("MainController", function($scope, $window) {
                 txt: text.chatText,
                 id: Math.random()
             });
+        }
+        //now see if we need to start deleting 'old' entries
+        if ($scope.chatLines.length > 40) {
+            $scope.chatLines.shift();
         }
         var chatHeight = 31 * $scope.chatLines.length;
         $('#chatLog').animate({

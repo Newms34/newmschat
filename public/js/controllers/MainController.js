@@ -73,7 +73,7 @@ app.controller("MainController", function($scope, $window) {
         }
         if (text.indexOf('/wiki ') === 0) {
             var stuffToWiki = text.replace('/wiki ', '');
-            text = '<a href="http://en.wikipedia.org/wiki/' + stuffToWiki + '" target="_blank">' + stuffToWiki + '</a>';
+            text = '<b>Wikipedia: </b><a href="http://en.wikipedia.org/wiki/' + stuffToWiki + '" target="_blank">' + stuffToWiki + '</a>';
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
                 chatText: text
@@ -91,7 +91,7 @@ app.controller("MainController", function($scope, $window) {
             return 0;
         } else if (text.indexOf('/google') === 0) {
             var stuffToGoogle = text.replace('/google ', '');
-            text = '<a href="https://www.google.com/search?q=' + stuffToGoogle + '" target="_blank">' + stuffToGoogle + '</a>';
+            text = '<b>Google: </b><a href="https://www.google.com/search?q=' + stuffToGoogle + '" target="_blank">' + stuffToGoogle + '</a>';
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
                 chatText: text

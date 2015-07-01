@@ -113,21 +113,30 @@ body {
     overflow: hidden;
 }
 .updatesSmall{
-    width:19px;
-    height:19px;
+    width:0;
+    height:0;
 }
-#updateToggle{
-    position:absolute;
-    width:15px;
-    height:15px;
+.menuIconToggle{
+    position:relative;
+    display:inline-block;
+    width:18px;
+    height:18px;
     text-align: center;
     font-weight: bold;
+    font-size:large;
     background-color: #780007;
     color:#fff;
-    left:2px;
-    top:2px;
     cursor:pointer;
 }
-#updateToggle:hover{
+.menuIconToggle:hover{
     background-color: #b99;
+}
+#menuIcons{
+    height:22px;
+    position: fixed;
+    background-color: #fed;
+    left:1%;
+    top:1%;
+    padding:2px;
+    z-index:5;
 }

@@ -16,11 +16,34 @@ app.controller("MainController", function($scope, $window) {
     $scope.textHist = [];
     $scope.textHistNum = 0;
     $scope.allUsers = [];
+    $scope.newMsg = false;
+    $scope.muted=false;
+    $scope.audioCont = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
         id: 0.12345
     }];
-    console.log('generating name');
+    if ($scope.audioCont) {
+        $scope.context = new $scope.audioCont();
+        $scope.gainValue = 0.2; //vol!
+        $scope.gainNode = $scope.context.createGain ? $scope.context.createGain() : $scope.context.createGainNode();
+        $scope.oscillator;
+    } else {
+        alert('Your browser doesn\'t support webaudio. Sorry!');
+    }
+    $scope.beep = function() {
+        if (typeof $scope.oscillator != 'undefined') $scope.oscillator.disconnect(); //if there is a previous osc, disconnect it first
+        $scope.oscillator = $scope.context.createOscillator();
+        $scope.oscillator.frequency.value = 400;
+        $scope.oscillator.connect($scope.gainNode);
+        $scope.gainNode.connect($scope.context.destination);
+        $scope.gainNode.gain.value = $scope.gainValue;
+        $scope.oscillator.type = 'sine';
+        $scope.oscillator.start ? $scope.oscillator.start(0) : $scope.oscillator.noteOn(0);
+        setTimeout(function() {
+            $scope.oscillator.disconnect();
+        }, 200)
+    };
 
     window.onkeyup = function(e) {
         //first two focus and send message
@@ -76,6 +99,7 @@ app.controller("MainController", function($scope, $window) {
             text = '<b>Wikipedia: </b><a href="http://en.wikipedia.org/wiki/' + stuffToWiki + '" target="_blank">' + stuffToWiki + '</a>';
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
+                name: $scope.userName,
                 chatText: text
             });
         } else if (text.indexOf('/block ') === 0) {
@@ -94,6 +118,7 @@ app.controller("MainController", function($scope, $window) {
             text = '<b>Google: </b><a href="https://www.google.com/search?q=' + stuffToGoogle + '" target="_blank">' + stuffToGoogle + '</a>';
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
+                name: $scope.userName,
                 chatText: text
             });
         } else if (text === '') {
@@ -104,11 +129,13 @@ app.controller("MainController", function($scope, $window) {
             console.log(text);
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
+                name: $scope.userName,
                 chatText: text
             });
         } else {
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
+                name: $scope.userName,
                 chatText: text
             });
         }
@@ -161,6 +188,17 @@ app.controller("MainController", function($scope, $window) {
                 txt: text.chatText,
                 id: Math.random()
             });
+            if (text.name !== $scope.userName) {
+                //not this user
+                if (!document.hasFocus()) {
+                    document.title = 'NewmsChat*'
+                    $scope.newMsg = true;
+                }
+                //beep
+                if (!$scope.muted) {
+                    $scope.beep();
+                }
+            }
         }
         //now see if we need to start deleting 'old' entries
         if ($scope.chatLines.length > 40) {
@@ -209,6 +247,9 @@ app.controller("MainController", function($scope, $window) {
             $scope.allUsers.push(users.list[q].userName);
         }
         $scope.$digest();
-
     });
+    window.onfocus = function() {
+        document.title = 'NewmsChat'
+        $scope.newMsg = true;
+    };
 });

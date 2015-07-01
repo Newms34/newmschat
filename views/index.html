@@ -16,7 +16,7 @@
         <div id='chatLog'>
             <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
         </div>
-        <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}'/>
+        <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}' />
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
         <div id='inst'>
             <h3>Instructions!</h3>
@@ -40,7 +40,8 @@
                 <ul>
                     <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1 && $index'>{{okayUser}}</li>
                 </ul>
-            </div><div id='blockedUser'>
+            </div>
+            <div id='blockedUser'>
                 Blocked:
                 <div ng-if='blockUser.length<1'>No blocked users yet!</div>
                 <ul>
@@ -49,8 +50,11 @@
             </div>
         </div>
     </div>
+    <div id='menuIcons'>
+        <div class='menuIconToggle' ng-click='(muted)?muted=false:muted=true;'><span ng-if='muted==false'>&#128266;</span><span ng-if='muted==true'>&#128264;</span></div>
+        <div class='menuIconToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
+    </div>
     <div class='updates' ng-class='{updatesSmall: updateShow==false}'>
-        <div id='updateToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
         <br/>
         <u>Latest Updates:</u>
         <ul>
@@ -60,6 +64,8 @@
             <li>Implemented update window.</li>
             <li>Refactored list of online users and list of blocked users</li>
             <li>Chat commands (typing '/') now turns the chatbox blue.</li>
+            <li>Chat now will beep when recieving a message from another person. This is mute-able</li>
+            <li>Window title will change to indicate unread messages</li>
         </ul>
         <u>Future Features:</u>
         <ul>

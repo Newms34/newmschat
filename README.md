@@ -1,2 +1,2 @@
-# 3D-Phone
-Stuff with phones, socket.io, and css-based 3d. Ohboy
+# NewmsChat
+Semi-Anonymous chat app with Socket.io

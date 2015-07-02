@@ -195,7 +195,7 @@ app.controller("MainController", function($scope, $window) {
             if (text.name !== $scope.userName) {
                 //not this user
                 if (!document.hasFocus()) {
-                    document.title = 'NewmsChat*'
+                    document.title = 'NewmsChat(!)'
                     $scope.newMsg = true;
                 }
                 //beep

@@ -81,12 +81,14 @@ io.on('connection', function(socket) {
         if (pass.pass == pwd) {
             console.log('Hi Admin!');
             io.emit('logStatus', {
+                name:pass.name,
                 status: true
             });
             isAuthed = true;
         } else {
             console.log('Who are you?!');
             io.emit('logStatus', {
+                name:pass.name,
                 status: false
             });
             isAuthed = false;

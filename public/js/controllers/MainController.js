@@ -1,6 +1,6 @@
 var app = angular.module("Chat", ['ngSanitize']);
-var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy', 'Big Bad'];
-var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle', 'Wolf'];
+var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy', 'Big Bad', 'Odiferous', 'Sinister'];
+var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle', 'Wolf', 'Beluga', 'Ant', 'Orangutan'];
 
 
 var socket = io();
@@ -20,6 +20,7 @@ app.controller("MainController", function($scope, $window) {
     $scope.newMsg = false;
     $scope.muted = false;
     $scope.loading = true;
+    $scope.adminShow = false;
     $scope.audioCont = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
@@ -262,15 +263,14 @@ app.controller("MainController", function($scope, $window) {
         $scope.passAttempt = $('#thePass').val();
         console.log('password', $scope.passAttempt);
         socket.emit('admin', {
+            name: $scope.userName,
             pass: $scope.passAttempt
         });
     };
     socket.on('logStatus', function(stat) {
-        $scope.loggedIn = stat.status;
-        if ($scope.loggedIn) {
+        if (stat.status && (stat.name == $scope.userName)) {
+            $scope.loggedIn = stat.status;
             $('#inst').slideUp(0);
-        } else {
-            $('#inst').slideDown();
         }
     });
     window.onfocus = function() {
@@ -284,7 +284,7 @@ app.directive('ngElementReady', [function() {
         priority: -1000, // a low number so this directive loads after all other directives have loaded. 
         restrict: "A", // attribute only
         link: function($scope, $element, $attributes) {
-            $scope.loading=false;
+            $scope.loading = false;
             // do what you want here.
         }
     };

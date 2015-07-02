@@ -19,6 +19,7 @@ app.controller("MainController", function($scope, $window) {
     $scope.allUsers = [];
     $scope.newMsg = false;
     $scope.muted = false;
+    $scope.loading = true;
     $scope.audioCont = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
@@ -192,9 +193,9 @@ app.controller("MainController", function($scope, $window) {
             //okay to add
             var x = new Date();
             var theTime = x.getHours() + ':' + x.getMinutes() + ':' + x.getSeconds();
-            var theText = theTime+' - '+text.chatText;
+            var theText = theTime + ' - ' + text.chatText;
             $scope.chatLines.push({
-                name:text.name,
+                name: text.name,
                 txt: theText,
                 id: Math.random()
             });
@@ -259,22 +260,32 @@ app.controller("MainController", function($scope, $window) {
     });
     $scope.adminLogin = function() {
         $scope.passAttempt = $('#thePass').val();
-        console.log('password',$scope.passAttempt);
+        console.log('password', $scope.passAttempt);
         socket.emit('admin', {
             pass: $scope.passAttempt
         });
     };
-    socket.on('logStatus',function(stat){
+    socket.on('logStatus', function(stat) {
         $scope.loggedIn = stat.status;
-        if ($scope.loggedIn){
+        if ($scope.loggedIn) {
             $('#inst').slideUp(0);
-        }else {
+        } else {
             $('#inst').slideDown();
         }
     });
-});
     window.onfocus = function() {
-        document.title = 'NewmsChat'
+        document.title = 'NewmsChat';
         $scope.newMsg = false;
     };
 });
+
+app.directive('ngElementReady', [function() {
+    return {
+        priority: -1000, // a low number so this directive loads after all other directives have loaded. 
+        restrict: "A", // attribute only
+        link: function($scope, $element, $attributes) {
+            $scope.loading=false;
+            // do what you want here.
+        }
+    };
+}]);

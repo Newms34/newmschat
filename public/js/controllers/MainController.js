@@ -17,7 +17,7 @@ app.controller("MainController", function($scope, $window) {
     $scope.textHistNum = 0;
     $scope.allUsers = [];
     $scope.newMsg = false;
-    $scope.muted=false;
+    $scope.muted = false;
     $scope.audioCont = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
@@ -184,8 +184,12 @@ app.controller("MainController", function($scope, $window) {
             }
         }
         if (!foundBlock) {
+            //okay to add
+            var x = new Date();
+            var theTime = x.getHours() + ':' + x.getMinutes() + ':' + x.getSeconds();
+            var theText = theTime+' - '+text.chatText;
             $scope.chatLines.push({
-                txt: text.chatText,
+                txt: theText,
                 id: Math.random()
             });
             if (text.name !== $scope.userName) {

@@ -14,7 +14,7 @@
             <input type='checkbox' id='keepName' ng-model='keepName' ng-change='nameSave()' /> Keep this name
         </div>
         <div id='chatLog'>
-            <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
+            <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.name==userName, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
         </div>
         <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}' />
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
@@ -60,8 +60,11 @@
             </div>
         </div>
     </div>
+    <div id='menuIcons'>
+        <div class='menuIconToggle' ng-click='(muted)?muted=false:muted=true;'><span ng-if='muted==false'>&#128266;</span><span ng-if='muted==true'>&#128264;</span></div>
+        <div class='menuIconToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
+    </div>
     <div class='updates' ng-class='{updatesSmall: updateShow==false}'>
-        <div id='updateToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
         <br/>
         <u>Latest Updates:</u>
         <ul>
@@ -71,8 +74,11 @@
             <li>Implemented update window.</li>
             <li>Refactored list of online users and list of blocked users</li>
             <li>Chat commands (typing '/') now turns the chatbox blue.</li>
+
             <li>/google and /wiki commands now show which command you've entered.</li>
-            <li>AFK timer: After 5 minutes of inactivity (no typing), user is marked as afk</li>
+            <li>Chat now will beep when recieving a message from another person. This is mute-able</li>
+            <li>Window title will change to indicate unread messages</li>
+            <li>Timestamps! (thanks, Jeff!)</li>
         </ul>
         <u>Future Features:</u>
         <ul>

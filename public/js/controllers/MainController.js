@@ -90,7 +90,8 @@ app.controller("MainController", function($scope, $window) {
             $scope.textHist.push('');
             $scope.textHistNum = $scope.textHist.length - 1;
             if ($scope.textHistNum > 30) {
-                $scope.textHist.shift().shift();
+                $scope.textHist.shift();
+                $scope.textHist.shift();
                 $scope.textHistNum -= 2;
             }
         }
@@ -189,6 +190,7 @@ app.controller("MainController", function($scope, $window) {
             var theTime = x.getHours() + ':' + x.getMinutes() + ':' + x.getSeconds();
             var theText = theTime+' - '+text.chatText;
             $scope.chatLines.push({
+                name:text.name,
                 txt: theText,
                 id: Math.random()
             });

@@ -14,7 +14,7 @@
             <input type='checkbox' id='keepName' ng-model='keepName' ng-change='nameSave()' /> Keep this name
         </div>
         <div id='chatLog'>
-            <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
+            <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.name==userName, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
         </div>
         <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}' />
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>

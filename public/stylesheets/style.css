@@ -131,3 +131,13 @@ body {
 #updateToggle:hover{
     background-color: #b99;
 }
+#adminTools {
+    padding: 10px;
+    right: 3%;
+    width: 30%;
+    background-color: #aaa;
+    background-color: #ccf;
+    color: #000;
+    position: absolute;
+    bottom: 5%;
+}

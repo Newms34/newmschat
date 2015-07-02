@@ -16,7 +16,7 @@
         <div id='chatLog'>
             <div class='chatWindowLine' ng-repeat='line in chatLines' ng-class='{isMe:line.txt.indexOf(userName)==0, sys:line.txt.indexOf("System")===3}' ng-bind-html='line.txt'></div>
         </div>
-        <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}'/>
+        <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}' />
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
         <div id='inst'>
             <h3>Instructions!</h3>
@@ -32,20 +32,31 @@
                 </ul>
             </li>
         </div>
+        <div id='adminTools' ng-if='loggedIn==true'>
+            <h3>Administrator Tools:</h3>
+            <button class='btn btn-danger' ng-click='banUser()'>Ban</button>
+        </div>
         <div id='users'>Users Online:
             <hr/>
             <div id='okayUser'>
                 Users:
                 <div ng-if='allUsers.length<1'>Nobody's online! Hmm... This can't be right!</div>
                 <ul>
-                    <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1 && $index'>{{okayUser}}</li>
+                    <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1'>{{okayUser.user}}</li>
                 </ul>
-            </div><div id='blockedUser'>
+            </div>
+            <div id='blockedUser'>
                 Blocked:
                 <div ng-if='blockUser.length<1'>No blocked users yet!</div>
                 <ul>
                     <li ng-repeat='badUser in blockUser'>{{badUser}}</li>
                 </ul>
+            </div>
+        </div>
+        <div id='adminSection'>
+            <div ng-if='loggedIn==false'>Password:
+                <input type='password' id = 'thePass' ng-model='passAttempt' />
+                <button ng-click='adminLogin()'>Login</button>
             </div>
         </div>
     </div>
@@ -60,6 +71,8 @@
             <li>Implemented update window.</li>
             <li>Refactored list of online users and list of blocked users</li>
             <li>Chat commands (typing '/') now turns the chatbox blue.</li>
+            <li>/google and /wiki commands now show which command you've entered.</li>
+            <li>AFK timer: After 5 minutes of inactivity (no typing), user is marked as afk</li>
         </ul>
         <u>Future Features:</u>
         <ul>

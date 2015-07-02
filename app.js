@@ -27,11 +27,17 @@ app.use('/', routes);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var userList = [];
+var pwd = 'mr34dpn34';
+var isAuthed = false;
 //following generates a random name for each new user.
 io.on('connection', function(socket) {
     socket.on('chatIn', function(words) {
         //Do stuff!
         io.emit('chatOut', words); //write words!
+    });
+    socket.on('active', function(user) {
+        //user is active, reset their timer
+
     });
     socket.on('pingServ', function(userUpd) {
         //two options here: either create new user 'object', or reset timer from old user
@@ -56,18 +62,35 @@ io.on('connection', function(socket) {
             });
         }
     });
-
     socket.on('getServUserData', function(emptyObj) {
         //first, business logic to remove dead users
-        for (var p=0;p<userList.length;p++){
+        for (var p = 0; p < userList.length; p++) {
             userList[p].userTimer--;
-            if (!userList[p].userTimer){
+            if (!userList[p].userTimer) {
                 //user ded q.q
-                userList = userList.splice(p,1);
+                userList = userList.splice(p, 1);
             }
         }
-        io.emit('servUserData', {list:userList});
+        io.emit('servUserData', {
+            list: userList
+        });
         // console.log(outList);
+    });
+    socket.on('admin', function(pass) {
+        console.log(pass.pass);
+        if (pass.pass == pwd) {
+            console.log('Hi Admin!');
+            io.emit('logStatus', {
+                status: true
+            });
+            isAuthed = true;
+        } else {
+            console.log('Who are you?!');
+            io.emit('logStatus', {
+                status: false
+            });
+            isAuthed = false;
+        }
     });
 });
 

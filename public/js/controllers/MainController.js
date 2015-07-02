@@ -15,6 +15,7 @@ app.controller("MainController", function($scope, $window) {
     $scope.focused = false;
     $scope.textHist = [];
     $scope.textHistNum = 0;
+    $scope.loggedIn = false;
     $scope.allUsers = [];
     $scope.newMsg = false;
     $scope.muted = false;
@@ -45,6 +46,7 @@ app.controller("MainController", function($scope, $window) {
         }, 200)
     };
 
+
     window.onkeyup = function(e) {
         //first two focus and send message
         //second two scroll thru previous entries
@@ -71,7 +73,6 @@ app.controller("MainController", function($scope, $window) {
             $('#chatInp').val($scope.textHist[$scope.textHistNum]);
         }
         var txt = $('#chatInp').val();
-        console.log(txt[0] == '/');
         if (txt[0] == '/') {
             $scope.commanding = true;
         } else {
@@ -125,9 +126,7 @@ app.controller("MainController", function($scope, $window) {
         } else if (text === '') {
             return 0;
         } else if (text.indexOf('<') != -1 || text.indexOf('>') != -1) {
-            console.log('found some codebits');
             text = text.replace(/[<]/gi, '&lt;').replace(/[>]/, '&gt;');
-            console.log(text);
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
                 name: $scope.userName,
@@ -150,7 +149,6 @@ app.controller("MainController", function($scope, $window) {
                 $scope.hueOff += 20;
                 for (var j = 0; j < els.length; j++) {
                     var theHue = ((j * 20) + $scope.hueOff) % 360;
-                    console.log(els[j].id)
                     $('#' + els[j].id).css({
                         'filter': 'hue-rotate(' + theHue + 'deg)',
                         '-webkit-filter': 'hue-rotate(' + theHue + 'deg)'
@@ -166,7 +164,13 @@ app.controller("MainController", function($scope, $window) {
         $('#chatInp').val('');
     };
     $scope.blockEm = function(text, mode) {
-        if (!mode && $scope.allUsers.indexOf(text) != -1) {
+        var found = false;
+        for (var n = 0; n < $scope.allUsers.length; n++) {
+            if ($scope.allUsers[n].user == text) {
+                found = true;
+            }
+        }
+        if (!mode && found) {
             //user exists and is online
             //add user to block list
             $scope.blockUser.push(text);
@@ -244,17 +248,33 @@ app.controller("MainController", function($scope, $window) {
         });
     }, 90);
     socket.on('servUserData', function(users) {
-        $scope.allUsers = [''];
-        // users.list.forEach(function(usr){
-        //     $scope.allUsers.push(usr.list.userName);
-        // });
+        $scope.allUsers = [];
         for (var q = 0; q < users.list.length; q++) {
-            $scope.allUsers.push(users.list[q].userName);
+            $scope.allUsers.push({
+                user: users.list[q].userName,
+                status: users.list[q].state
+            });
         }
         $scope.$digest();
     });
+    $scope.adminLogin = function() {
+        $scope.passAttempt = $('#thePass').val();
+        console.log('password',$scope.passAttempt);
+        socket.emit('admin', {
+            pass: $scope.passAttempt
+        });
+    };
+    socket.on('logStatus',function(stat){
+        $scope.loggedIn = stat.status;
+        if ($scope.loggedIn){
+            $('#inst').slideUp(0);
+        }else {
+            $('#inst').slideDown();
+        }
+    });
+});
     window.onfocus = function() {
         document.title = 'NewmsChat'
-        $scope.newMsg = true;
+        $scope.newMsg = false;
     };
 });

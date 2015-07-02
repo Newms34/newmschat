@@ -32,13 +32,17 @@
                 </ul>
             </li>
         </div>
+        <div id='adminTools' ng-if='loggedIn==true'>
+            <h3>Administrator Tools:</h3>
+            <button class='btn btn-danger' ng-click='banUser()'>Ban</button>
+        </div>
         <div id='users'>Users Online:
             <hr/>
             <div id='okayUser'>
                 Users:
                 <div ng-if='allUsers.length<1'>Nobody's online! Hmm... This can't be right!</div>
                 <ul>
-                    <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1 && $index'>{{okayUser}}</li>
+                    <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1'>{{okayUser.user}}</li>
                 </ul>
             </div>
             <div id='blockedUser'>
@@ -47,6 +51,12 @@
                 <ul>
                     <li ng-repeat='badUser in blockUser'>{{badUser}}</li>
                 </ul>
+            </div>
+        </div>
+        <div id='adminSection'>
+            <div ng-if='loggedIn==false'>Password:
+                <input type='password' id = 'thePass' ng-model='passAttempt' />
+                <button ng-click='adminLogin()'>Login</button>
             </div>
         </div>
     </div>
@@ -64,6 +74,8 @@
             <li>Implemented update window.</li>
             <li>Refactored list of online users and list of blocked users</li>
             <li>Chat commands (typing '/') now turns the chatbox blue.</li>
+
+            <li>/google and /wiki commands now show which command you've entered.</li>
             <li>Chat now will beep when recieving a message from another person. This is mute-able</li>
             <li>Window title will change to indicate unread messages</li>
             <li>Timestamps! (thanks, Jeff!)</li>

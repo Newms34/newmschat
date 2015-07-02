@@ -216,7 +216,6 @@ app.controller("MainController", function($scope, $window) {
         }, 100);
         $('#chatLog').scrollTop(chatHeight);
         $scope.$apply();
-        $('#chatLog').focus();
     });
     //save the name
     $scope.nameSave = function() {

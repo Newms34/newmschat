@@ -254,7 +254,8 @@ app.controller("MainController", function($scope, $window) {
         for (var q = 0; q < users.list.length; q++) {
             $scope.allUsers.push({
                 user: users.list[q].userName,
-                status: users.list[q].state
+                status: users.list[q].state,
+                banned: false
             });
         }
         $scope.$digest();
@@ -265,6 +266,14 @@ app.controller("MainController", function($scope, $window) {
         socket.emit('admin', {
             name: $scope.userName,
             pass: $scope.passAttempt
+        });
+    };
+    $scope.banEm = function(userBan, banStatus) {
+        //0 = unban, 1 = ban
+        console.log(userBan);
+        socket.emit('banUser', {
+            name: userBan.user,
+            banned: banStatus
         });
     };
     socket.on('logStatus', function(stat) {

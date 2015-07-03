@@ -132,16 +132,16 @@ body {
 .menuIconToggle:hover{
     background-color: #b99;
 }
-
-#adminTools {
+#adminSection{
     padding: 10px;
-    right: 3%;
+    top:215px;
     width: 30%;
     background-color: #aaa;
     background-color: #ccf;
     color: #000;
     position: absolute;
-    bottom: 5%;
+    right: 3%;
+    float:right;
 }
 #menuIcons{
     height:22px;
@@ -162,4 +162,7 @@ body {
     width:100vw;
     height:100vh;
     background-color: #000;
+}
+.pointy{
+    cursor:pointer;
 }

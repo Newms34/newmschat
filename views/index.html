@@ -7,7 +7,7 @@
     <link href="/stylesheets/style.css" rel="stylesheet" />
 </head>
 
-<body id="homepage" ng-app='Chat' ng-controller='MainController' ng-element-ready='' >
+<body id="homepage" ng-app='Chat' ng-controller='MainController' ng-element-ready=''>
     <div id='loadScrn' ng-if='loading==true'></div>
     <div id='chatWindow'>
         <div id='nameBox'>
@@ -19,7 +19,7 @@
         </div>
         <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}' />
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
-        <div id='inst'>
+        <div id='inst' ng-if='adminShow==false'>
             <h3>Instructions!</h3>
             <li>Type in box the light green textbox.</li>
             <li>Press enter or click blue button</li>
@@ -32,10 +32,6 @@
                     <li>/google <i>word</i>: Search Google for <i>word</i></li>
                 </ul>
             </li>
-        </div>
-        <div id='adminTools' ng-if='loggedIn==true'>
-            <h3>Administrator Tools:</h3>
-            <button class='btn btn-danger' ng-click='banUser()'>Ban</button>
         </div>
         <div id='users'>Users Online:
             <hr/>
@@ -54,10 +50,36 @@
                 </ul>
             </div>
         </div>
-        <div id='adminSection'>
+        <div id='adminSection' ng-if='adminShow==true'>
             <div ng-if='loggedIn==false'>Password:
-                <input type='password' id = 'thePass' ng-model='passAttempt' />
+                <input type='password' id='thePass' ng-model='passAttempt' />
                 <button ng-click='adminLogin()'>Login</button>
+            </div>
+            <div ng-if='loggedIn==true'>
+                <button ng-click='banEm(allUsers[0],1)'>TEST</button>
+                <h3>Administrator Tools:</h3>
+                <table class='table table-striped'>
+                    <thead>
+                        <tr class='danger'>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Ban/Unban</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='banUser in allUsers'>
+                            <td>{{banUser.user}}</td>
+                            <td ng-if='banUser.banned==true'>Banned</td>
+                            <td ng-if='banUser.banned==false'>Not Banned</td>
+                            <td ng-if='banUser.banned==true' ng-click='banEm(banUser,0);' class='btn-success pointy'>
+                                Unban
+                            </td>
+                            <td ng-if='banUser.banned==false' ng-click='banEm(banUser,1);' class='btn-danger pointy'>
+                                Ban
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -65,10 +87,8 @@
         <div class='menuIconToggle' ng-click='(muted)?muted=false:muted=true;'><span ng-if='muted==false'>&#128266;</span><span ng-if='muted==true'>&#128264;</span></div>
         <div class='menuIconToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
         <div class='menuIconToggle' ng-click='(adminShow)?adminShow=false:adminShow=true;'><span ng-if='adminShow==false'>&#128274;</span><span ng-if='adminShow==true'>&#128275;</span></div>
-
-        
     </div>
-    <div class='updates' ng-class='{updatesSmall: updateShow==false}'>
+    <div class='updates' ng-if='updateShow==true'>
         <br/>
         <u>Latest Updates:</u>
         <ul>
@@ -78,7 +98,6 @@
             <li>Implemented update window.</li>
             <li>Refactored list of online users and list of blocked users</li>
             <li>Chat commands (typing '/') now turns the chatbox blue.</li>
-
             <li>/google and /wiki commands now show which command you've entered.</li>
             <li>Chat now will beep when recieving a message from another person. This is mute-able</li>
             <li>Window title will change to indicate unread messages</li>

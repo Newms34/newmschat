@@ -27,12 +27,13 @@ app.use('/', routes);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var userList = [];
-var pwd = 'mr34dpn34';
+var pwd = '4';
 var isAuthed = false;
 //following generates a random name for each new user.
 io.on('connection', function(socket) {
     socket.on('chatIn', function(words) {
         //Do stuff!
+        console.log(socket.handshake.address);
         io.emit('chatOut', words); //write words!
     });
     socket.on('active', function(user) {
@@ -58,9 +59,28 @@ io.on('connection', function(socket) {
             userList.push({
                 userName: userUpd.name,
                 userId: userUpd.key,
-                userTimer: 40
+                userTimer: 40,
+                userBanned:false
             });
         }
+    });
+    socket.on('banUser',function(userBan){
+        var foundUser = -1;
+        for (var i = 0; i < userList.length; i++) {
+            if (userList[i].userName == userBan.name) {
+                foundUser = i;
+            }
+        }
+        if (userBan.banned){
+            //ban em
+            userList[foundUser].userBanned = true;
+        }else {
+            //unban em
+            userList[foundUser].userBanned = false;
+        }
+        io.emit('servUserData', {
+            list: userList
+        });
     });
     socket.on('getServUserData', function(emptyObj) {
         //first, business logic to remove dead users

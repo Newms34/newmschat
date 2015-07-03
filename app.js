@@ -94,6 +94,9 @@ io.on('connection', function(socket) {
             if (!userList[p].userTimer) {
                 //user ded q.q
                 userList = userList.splice(p, 1);
+                io.emit('discBeep', {
+                    x: 1
+                });
             }
         }
         io.emit('servUserData', {
@@ -119,27 +122,22 @@ io.on('connection', function(socket) {
             isAuthed = false;
         }
     });
-    socket.on('chkBan', function(empty) {
-        if (banList.indexOf(socket.handshake.address)) {
+    socket.on('chkBan', function(ban) {
+        if (banList.indexOf(socket.handshake.address) != -1) {
             io.emit('chkBanRep', {
-                ban: true
+                name: ban.name,
+                status: true
             });
-        }else {
+        } else {
             io.emit('chkBanRep', {
-                ban: false
+                name: ban.name,
+                status: false
             });
         }
-    })
+    });
 });
 
-function removeUser(user) {
-    userList.splice(user, 1);
-}
-
-
 http.listen(process.env.PORT || 3000);
-
-
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

@@ -29,19 +29,19 @@ app.controller("MainController", function($scope, $window) {
     }];
     //ban check stuff
     socket.emit('chkBan', {
-        x: 1
+        name: $scope.userName
     });
-    socket.on('chkBanRep',function(ban){
-        if (ban.status==true){
+    socket.on('chkBanRep', function(ban) {
+        if (ban.status === true && ban.name == $scope.userName) {
             //user b&!
-            console.log('Ur b&!')
-        }
-        else {
+            console.log('banned ', ban.name);
+        } else {
             //user not b&!
-            console.log('Not B&')
+            console.log('not banned ', ban.name);
         }
     });
 
+    //audio stuff
     if ($scope.audioCont) {
         $scope.context = new $scope.audioCont();
         $scope.gainValue = 0.2; //vol!
@@ -50,10 +50,10 @@ app.controller("MainController", function($scope, $window) {
     } else {
         alert('Your browser doesn\'t support webaudio. Sorry!');
     }
-    $scope.beep = function() {
+    $scope.beep = function(beepArr) {
         if (typeof $scope.oscillator != 'undefined') $scope.oscillator.disconnect(); //if there is a previous osc, disconnect it first
         $scope.oscillator = $scope.context.createOscillator();
-        $scope.oscillator.frequency.value = 400;
+        $scope.oscillator.frequency.value = beepArr[0];
         $scope.oscillator.connect($scope.gainNode);
         $scope.gainNode.connect($scope.context.destination);
         $scope.gainNode.gain.value = $scope.gainValue;
@@ -61,9 +61,18 @@ app.controller("MainController", function($scope, $window) {
         $scope.oscillator.start ? $scope.oscillator.start(0) : $scope.oscillator.noteOn(0);
         setTimeout(function() {
             $scope.oscillator.disconnect();
-        }, 200)
+            console.log(beepArr)
+            beepArr.shift();
+            console.log(beepArr);
+            if (beepArr.length){
+                $scope.beep(beepArr);
+            }
+        }, 75);
     };
 
+    socket.on('discBeep',function(empty){
+        $scope.beep([220,207,195]);
+    })
 
     window.onkeyup = function(e) {
         //first two focus and send message
@@ -224,7 +233,7 @@ app.controller("MainController", function($scope, $window) {
                 }
                 //beep
                 if (!$scope.muted) {
-                    $scope.beep();
+                    $scope.beep([440,466.164,493.883]);
                 }
             }
         }
@@ -298,7 +307,9 @@ app.controller("MainController", function($scope, $window) {
                 banned: usr.banned
             });
         });
-        socket.emit('chkBan',{x:1})
+        socket.emit('chkBan', {
+            name: $scope.userName
+        })
         $scope.$digest();
     });
 

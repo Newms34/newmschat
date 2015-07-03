@@ -56,7 +56,6 @@
                 <button ng-click='adminLogin()'>Login</button>
             </div>
             <div ng-if='loggedIn==true'>
-                <button ng-click='banEm(allUsers[0],1)'>TEST</button>
                 <h3>Administrator Tools:</h3>
                 <table class='table table-striped'>
                     <thead>
@@ -67,15 +66,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat='banUser in allUsers'>
+                        <tr ng-repeat='banUser in tempAdminData'>
                             <td>{{banUser.user}}</td>
                             <td ng-if='banUser.banned==true'>Banned</td>
                             <td ng-if='banUser.banned==false'>Not Banned</td>
-                            <td ng-if='banUser.banned==true' ng-click='banEm(banUser,0);' class='btn-success pointy'>
-                                Unban
+                            <td ng-if='banUser.banned==true'>
+                                <button ng-click='banEm(banUser,0);' class='btn btn-success'>Unban</button>
                             </td>
-                            <td ng-if='banUser.banned==false' ng-click='banEm(banUser,1);' class='btn-danger pointy'>
-                                Ban
+                            <td ng-if='banUser.banned==false'>
+                                <button ng-click='banEm(banUser,1);' class='btn btn-danger'>Ban</button>
                             </td>
                         </tr>
                     </tbody>
@@ -86,7 +85,7 @@
     <div id='menuIcons'>
         <div class='menuIconToggle' ng-click='(muted)?muted=false:muted=true;'><span ng-if='muted==false'>&#128266;</span><span ng-if='muted==true'>&#128264;</span></div>
         <div class='menuIconToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
-        <div class='menuIconToggle' ng-click='(adminShow)?adminShow=false:adminShow=true;'><span ng-if='adminShow==false'>&#128274;</span><span ng-if='adminShow==true'>&#128275;</span></div>
+        <div class='menuIconToggle' ng-click='toggleAdmin()'><span ng-if='adminShow==false'>&#128274;</span><span ng-if='adminShow==true'>&#128275;</span></div>
     </div>
     <div class='updates' ng-if='updateShow==true'>
         <br/>

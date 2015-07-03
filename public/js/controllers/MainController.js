@@ -21,6 +21,7 @@ app.controller("MainController", function($scope, $window) {
     $scope.muted = false;
     $scope.loading = true;
     $scope.adminShow = false;
+    $scope.tempAdminData = [];
     $scope.audioCont = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
@@ -260,6 +261,45 @@ app.controller("MainController", function($scope, $window) {
         }
         $scope.$digest();
     });
+
+    socket.on('servUserDataAll', function(users) {
+        //for bans
+        $scope.allUsers = [];
+        for (var q = 0; q < users.list.length; q++) {
+            $scope.allUsers.push({
+                user: users.list[q].userName,
+                status: users.list[q].state,
+                banned: users.list[q].banned
+            });
+        }
+        $scope.tempAdminData = []; //empty temp data
+        $scope.allUsers.forEach(function(usr) {
+            $scope.tempAdminData.push({
+                user: usr.user,
+                status: usr.status,
+                banned: usr.banned
+            });
+        });
+        console.log($scope.tempAdminData)
+        $scope.$digest();
+    });
+
+    $scope.toggleAdmin = function() {
+        if ($scope.adminShow) {
+            //already showing admin window, so hide it.
+            $scope.adminShow = false;
+        } else {
+            $scope.tempAdminData = []; //empty temp data
+            $scope.allUsers.forEach(function(usr) {
+                $scope.tempAdminData.push({
+                    user: usr.user,
+                    status: usr.status,
+                    banned: usr.banned
+                });
+            });
+            $scope.adminShow = true;
+        }
+    }
     $scope.adminLogin = function() {
         $scope.passAttempt = $('#thePass').val();
         console.log('password', $scope.passAttempt);

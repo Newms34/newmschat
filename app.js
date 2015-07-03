@@ -78,7 +78,8 @@ io.on('connection', function(socket) {
             //unban em
             userList[foundUser].userBanned = false;
         }
-        io.emit('servUserData', {
+        console.log(userList)
+        io.emit('servUserDataAll', {
             list: userList
         });
     });

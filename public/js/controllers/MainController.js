@@ -27,6 +27,21 @@ app.controller("MainController", function($scope, $window) {
         txt: '<i>System: Start chatting!</i>',
         id: 0.12345
     }];
+    //ban check stuff
+    socket.emit('chkBan', {
+        x: 1
+    });
+    socket.on('chkBanRep',function(ban){
+        if (ban.status==true){
+            //user b&!
+            console.log('Ur b&!')
+        }
+        else {
+            //user not b&!
+            console.log('Not B&')
+        }
+    });
+
     if ($scope.audioCont) {
         $scope.context = new $scope.audioCont();
         $scope.gainValue = 0.2; //vol!
@@ -264,14 +279,17 @@ app.controller("MainController", function($scope, $window) {
 
     socket.on('servUserDataAll', function(users) {
         //for bans
+        console.log('servAll:', users);
         $scope.allUsers = [];
+        console.log('all:', $scope.allUsers);
         for (var q = 0; q < users.list.length; q++) {
             $scope.allUsers.push({
                 user: users.list[q].userName,
                 status: users.list[q].state,
-                banned: users.list[q].banned
+                banned: users.list[q].userBanned
             });
         }
+        console.log('all:', $scope.allUsers);
         $scope.tempAdminData = []; //empty temp data
         $scope.allUsers.forEach(function(usr) {
             $scope.tempAdminData.push({
@@ -280,7 +298,7 @@ app.controller("MainController", function($scope, $window) {
                 banned: usr.banned
             });
         });
-        console.log($scope.tempAdminData)
+        socket.emit('chkBan',{x:1})
         $scope.$digest();
     });
 
@@ -299,10 +317,9 @@ app.controller("MainController", function($scope, $window) {
             });
             $scope.adminShow = true;
         }
-    }
+    };
     $scope.adminLogin = function() {
         $scope.passAttempt = $('#thePass').val();
-        console.log('password', $scope.passAttempt);
         socket.emit('admin', {
             name: $scope.userName,
             pass: $scope.passAttempt
@@ -310,7 +327,6 @@ app.controller("MainController", function($scope, $window) {
     };
     $scope.banEm = function(userBan, banStatus) {
         //0 = unban, 1 = ban
-        console.log(userBan);
         socket.emit('banUser', {
             name: userBan.user,
             banned: banStatus
@@ -326,6 +342,7 @@ app.controller("MainController", function($scope, $window) {
         document.title = 'NewmsChat';
         $scope.newMsg = false;
     };
+
 });
 
 app.directive('ngElementReady', [function() {

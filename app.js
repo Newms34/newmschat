@@ -27,6 +27,7 @@ app.use('/', routes);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var userList = [];
+var banList = [];
 var pwd = '4';
 var isAuthed = false;
 //following generates a random name for each new user.
@@ -60,25 +61,28 @@ io.on('connection', function(socket) {
                 userName: userUpd.name,
                 userId: userUpd.key,
                 userTimer: 40,
-                userBanned:false
+                userBanned: false
             });
         }
     });
-    socket.on('banUser',function(userBan){
+    socket.on('banUser', function(userBan) {
         var foundUser = -1;
         for (var i = 0; i < userList.length; i++) {
             if (userList[i].userName == userBan.name) {
                 foundUser = i;
             }
         }
-        if (userBan.banned){
+        if (userBan.banned) {
             //ban em
+            banList.push(socket.handshake.address);
             userList[foundUser].userBanned = true;
-        }else {
+        } else {
             //unban em
+            banList.splice(banList.indexOf(socket.handshake.address), 1);
             userList[foundUser].userBanned = false;
         }
-        console.log(userList)
+        console.log(banList);
+        console.log(userList);
         io.emit('servUserDataAll', {
             list: userList
         });
@@ -102,19 +106,30 @@ io.on('connection', function(socket) {
         if (pass.pass == pwd) {
             console.log('Hi Admin!');
             io.emit('logStatus', {
-                name:pass.name,
+                name: pass.name,
                 status: true
             });
             isAuthed = true;
         } else {
             console.log('Who are you?!');
             io.emit('logStatus', {
-                name:pass.name,
+                name: pass.name,
                 status: false
             });
             isAuthed = false;
         }
     });
+    socket.on('chkBan', function(empty) {
+        if (banList.indexOf(socket.handshake.address)) {
+            io.emit('chkBanRep', {
+                ban: true
+            });
+        }else {
+            io.emit('chkBanRep', {
+                ban: false
+            });
+        }
+    })
 });
 
 function removeUser(user) {

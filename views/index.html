@@ -68,10 +68,10 @@
                     <tbody>
                         <tr ng-repeat='banUser in tempAdminData'>
                             <td>{{banUser.user}}</td>
-                            <td ng-if='banUser.banned==true'>Banned</td>
+                            <td ng-if='banUser.banned!=false'>Banned</td>
                             <td ng-if='banUser.banned==false'>Not Banned</td>
-                            <td ng-if='banUser.banned==true'>
-                                <button ng-click='banEm(banUser,0);' class='btn btn-success'>Unban</button>
+                            <td ng-if='banUser.banned!=false'>
+                                <button ng-click='banEm(banUser,0);' class='btn btn-info'>Unban</button>
                             </td>
                             <td ng-if='banUser.banned==false'>
                                 <button ng-click='banEm(banUser,1);' class='btn btn-danger'>Ban</button>
@@ -101,11 +101,13 @@
             <li>Chat now will beep when recieving a message from another person. This is mute-able</li>
             <li>Window title will change to indicate unread messages</li>
             <li>Timestamps! (thanks, Jeff!)</li>
+            <li>Banning now somewhat works. The password is '4'. Note that it does not actually ban you at the moment (obviously, I wouldn't be giving out the password if it did!).</li>
         </ul>
         <u>Future Features:</u>
         <ul>
             <li>AFK Timeout system: If user goes afk for a certain amount of time, grey out their name to signify that they might not respond.</li>
             <li>More commands!</li>
+            <li>Ban will redirect to a separate 'you are banned!' page</li>
         </ul>
     </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>

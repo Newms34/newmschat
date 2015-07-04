@@ -27,11 +27,19 @@ app.use('/', routes);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var userList = [];
+var banList = [];
+var pwd = '4';
+var isAuthed = false;
 //following generates a random name for each new user.
 io.on('connection', function(socket) {
     socket.on('chatIn', function(words) {
         //Do stuff!
+        console.log(socket.handshake.address);
         io.emit('chatOut', words); //write words!
+    });
+    socket.on('active', function(user) {
+        //user is active, reset their timer
+
     });
     socket.on('pingServ', function(userUpd) {
         //two options here: either create new user 'object', or reset timer from old user
@@ -52,33 +60,84 @@ io.on('connection', function(socket) {
             userList.push({
                 userName: userUpd.name,
                 userId: userUpd.key,
-                userTimer: 40
+                userTimer: 40,
+                userBanned: false
             });
         }
     });
-
-    socket.on('getServUserData', function(emptyObj) {
-        //first, business logic to remove dead users
-        for (var p=0;p<userList.length;p++){
-            userList[p].userTimer--;
-            if (!userList[p].userTimer){
-                //user ded q.q
-                userList = userList.splice(p,1);
+    socket.on('banUser', function(userBan) {
+        var foundUser = -1;
+        for (var i = 0; i < userList.length; i++) {
+            if (userList[i].userName == userBan.name) {
+                foundUser = i;
             }
         }
-        io.emit('servUserData', {list:userList});
+        if (userBan.banned) {
+            //ban em
+            banList.push(socket.handshake.address);
+            userList[foundUser].userBanned = true;
+        } else {
+            //unban em
+            banList.splice(banList.indexOf(socket.handshake.address), 1);
+            userList[foundUser].userBanned = false;
+        }
+        console.log(banList);
+        console.log(userList);
+        io.emit('servUserDataAll', {
+            list: userList
+        });
+    });
+    socket.on('getServUserData', function(emptyObj) {
+        //first, business logic to remove dead users
+        for (var p = 0; p < userList.length; p++) {
+            userList[p].userTimer--;
+            if (!userList[p].userTimer) {
+                //user ded q.q
+                userList = userList.splice(p, 1);
+                io.emit('discBeep', {
+                    x: 1
+                });
+            }
+        }
+        io.emit('servUserData', {
+            list: userList
+        });
         // console.log(outList);
+    });
+    socket.on('admin', function(pass) {
+        console.log(pass.pass);
+        if (pass.pass == pwd) {
+            console.log('Hi Admin!');
+            io.emit('logStatus', {
+                name: pass.name,
+                status: true
+            });
+            isAuthed = true;
+        } else {
+            console.log('Who are you?!');
+            io.emit('logStatus', {
+                name: pass.name,
+                status: false
+            });
+            isAuthed = false;
+        }
+    });
+    socket.on('chkBan', function(ban) {
+        if (banList.indexOf(socket.handshake.address) != -1) {
+            io.emit('chkBanRep', {
+                name: ban.name,
+                status: true
+            });
+        } else {
+            io.emit('chkBanRep', {
+                name: ban.name,
+                status: false
+            });
+        }
     });
 });
 
-function removeUser(user) {
-    userList.splice(user, 1);
-}
-
-
 http.listen(process.env.PORT || 3000);
-
-
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

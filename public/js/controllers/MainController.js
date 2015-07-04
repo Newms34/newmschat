@@ -1,6 +1,6 @@
 var app = angular.module("Chat", ['ngSanitize']);
-var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy', 'Big Bad'];
-var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle', 'Wolf'];
+var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy', 'Big Bad', 'Odiferous', 'Sinister'];
+var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle', 'Wolf', 'Beluga', 'Ant', 'Orangutan'];
 
 
 var socket = io();
@@ -15,14 +15,33 @@ app.controller("MainController", function($scope, $window) {
     $scope.focused = false;
     $scope.textHist = [];
     $scope.textHistNum = 0;
+    $scope.loggedIn = false;
     $scope.allUsers = [];
     $scope.newMsg = false;
     $scope.muted = false;
+    $scope.loading = true;
+    $scope.adminShow = false;
+    $scope.tempAdminData = [];
     $scope.audioCont = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
     $scope.chatLines = [{
         txt: '<i>System: Start chatting!</i>',
         id: 0.12345
     }];
+    //ban check stuff
+    socket.emit('chkBan', {
+        name: $scope.userName
+    });
+    socket.on('chkBanRep', function(ban) {
+        if (ban.status === true && ban.name == $scope.userName) {
+            //user b&!
+            console.log('banned ', ban.name);
+        } else {
+            //user not b&!
+            console.log('not banned ', ban.name);
+        }
+    });
+
+    //audio stuff
     if ($scope.audioCont) {
         $scope.context = new $scope.audioCont();
         $scope.gainValue = 0.2; //vol!
@@ -31,10 +50,10 @@ app.controller("MainController", function($scope, $window) {
     } else {
         alert('Your browser doesn\'t support webaudio. Sorry!');
     }
-    $scope.beep = function() {
+    $scope.beep = function(beepArr) {
         if (typeof $scope.oscillator != 'undefined') $scope.oscillator.disconnect(); //if there is a previous osc, disconnect it first
         $scope.oscillator = $scope.context.createOscillator();
-        $scope.oscillator.frequency.value = 400;
+        $scope.oscillator.frequency.value = beepArr[0];
         $scope.oscillator.connect($scope.gainNode);
         $scope.gainNode.connect($scope.context.destination);
         $scope.gainNode.gain.value = $scope.gainValue;
@@ -42,8 +61,18 @@ app.controller("MainController", function($scope, $window) {
         $scope.oscillator.start ? $scope.oscillator.start(0) : $scope.oscillator.noteOn(0);
         setTimeout(function() {
             $scope.oscillator.disconnect();
-        }, 150)
+            console.log(beepArr)
+            beepArr.shift();
+            console.log(beepArr);
+            if (beepArr.length){
+                $scope.beep(beepArr);
+            }
+        }, 75);
     };
+
+    socket.on('discBeep',function(empty){
+        $scope.beep([220,207,195]);
+    })
 
     window.onkeyup = function(e) {
         //first two focus and send message
@@ -71,7 +100,6 @@ app.controller("MainController", function($scope, $window) {
             $('#chatInp').val($scope.textHist[$scope.textHistNum]);
         }
         var txt = $('#chatInp').val();
-        console.log(txt[0] == '/');
         if (txt[0] == '/') {
             $scope.commanding = true;
         } else {
@@ -125,9 +153,7 @@ app.controller("MainController", function($scope, $window) {
         } else if (text === '') {
             return 0;
         } else if (text.indexOf('<') != -1 || text.indexOf('>') != -1) {
-            console.log('found some codebits');
             text = text.replace(/[<]/gi, '&lt;').replace(/[>]/, '&gt;');
-            console.log(text);
             text = $scope.userName + ': ' + text;
             socket.emit('chatIn', {
                 name: $scope.userName,
@@ -150,7 +176,6 @@ app.controller("MainController", function($scope, $window) {
                 $scope.hueOff += 20;
                 for (var j = 0; j < els.length; j++) {
                     var theHue = ((j * 20) + $scope.hueOff) % 360;
-                    console.log(els[j].id)
                     $('#' + els[j].id).css({
                         'filter': 'hue-rotate(' + theHue + 'deg)',
                         '-webkit-filter': 'hue-rotate(' + theHue + 'deg)'
@@ -166,7 +191,13 @@ app.controller("MainController", function($scope, $window) {
         $('#chatInp').val('');
     };
     $scope.blockEm = function(text, mode) {
-        if (!mode && $scope.allUsers.indexOf(text) != -1) {
+        var found = false;
+        for (var n = 0; n < $scope.allUsers.length; n++) {
+            if ($scope.allUsers[n].user == text) {
+                found = true;
+            }
+        }
+        if (!mode && found) {
             //user exists and is online
             //add user to block list
             $scope.blockUser.push(text);
@@ -188,9 +219,9 @@ app.controller("MainController", function($scope, $window) {
             //okay to add
             var x = new Date();
             var theTime = x.getHours() + ':' + x.getMinutes() + ':' + x.getSeconds();
-            var theText = theTime+' - '+text.chatText;
+            var theText = theTime + ' - ' + text.chatText;
             $scope.chatLines.push({
-                name:text.name,
+                name: text.name,
                 txt: theText,
                 id: Math.random()
             });
@@ -202,7 +233,7 @@ app.controller("MainController", function($scope, $window) {
                 }
                 //beep
                 if (!$scope.muted) {
-                    $scope.beep();
+                    $scope.beep([440,466.164,493.883]);
                 }
             }
         }
@@ -244,17 +275,94 @@ app.controller("MainController", function($scope, $window) {
         });
     }, 90);
     socket.on('servUserData', function(users) {
-        $scope.allUsers = [''];
-        // users.list.forEach(function(usr){
-        //     $scope.allUsers.push(usr.list.userName);
-        // });
+        $scope.allUsers = [];
         for (var q = 0; q < users.list.length; q++) {
-            $scope.allUsers.push(users.list[q].userName);
+            $scope.allUsers.push({
+                user: users.list[q].userName,
+                status: users.list[q].state,
+                banned: false
+            });
         }
         $scope.$digest();
     });
-    window.onfocus = function() {
-        document.title = 'NewmsChat'
-        $scope.newMsg = true;
+
+    socket.on('servUserDataAll', function(users) {
+        //for bans
+        console.log('servAll:', users);
+        $scope.allUsers = [];
+        console.log('all:', $scope.allUsers);
+        for (var q = 0; q < users.list.length; q++) {
+            $scope.allUsers.push({
+                user: users.list[q].userName,
+                status: users.list[q].state,
+                banned: users.list[q].userBanned
+            });
+        }
+        console.log('all:', $scope.allUsers);
+        $scope.tempAdminData = []; //empty temp data
+        $scope.allUsers.forEach(function(usr) {
+            $scope.tempAdminData.push({
+                user: usr.user,
+                status: usr.status,
+                banned: usr.banned
+            });
+        });
+        socket.emit('chkBan', {
+            name: $scope.userName
+        })
+        $scope.$digest();
+    });
+
+    $scope.toggleAdmin = function() {
+        if ($scope.adminShow) {
+            //already showing admin window, so hide it.
+            $scope.adminShow = false;
+        } else {
+            $scope.tempAdminData = []; //empty temp data
+            $scope.allUsers.forEach(function(usr) {
+                $scope.tempAdminData.push({
+                    user: usr.user,
+                    status: usr.status,
+                    banned: usr.banned
+                });
+            });
+            $scope.adminShow = true;
+        }
     };
+    $scope.adminLogin = function() {
+        $scope.passAttempt = $('#thePass').val();
+        socket.emit('admin', {
+            name: $scope.userName,
+            pass: $scope.passAttempt
+        });
+    };
+    $scope.banEm = function(userBan, banStatus) {
+        //0 = unban, 1 = ban
+        socket.emit('banUser', {
+            name: userBan.user,
+            banned: banStatus
+        });
+    };
+    socket.on('logStatus', function(stat) {
+        if (stat.status && (stat.name == $scope.userName)) {
+            $scope.loggedIn = stat.status;
+            $('#inst').slideUp(0);
+        }
+    });
+    window.onfocus = function() {
+        document.title = 'NewmsChat';
+        $scope.newMsg = false;
+    };
+
 });
+
+app.directive('ngElementReady', [function() {
+    return {
+        priority: -1000, // a low number so this directive loads after all other directives have loaded. 
+        restrict: "A", // attribute only
+        link: function($scope, $element, $attributes) {
+            $scope.loading = false;
+            // do what you want here.
+        }
+    };
+}]);

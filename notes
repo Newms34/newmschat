@@ -1,0 +1,13 @@
+TO DO:
+write ban code/ui
+can get user IP from socket.handshake.address, and add that to list of banned 'users'.
+can we send an event to just that user (i.e., 'LOL B&')?
+
+
+FOR OVER-REFRESHING $scope.allUsers:
+on opening admin panel, copy $scope.allUser's data into temp (unchanging) object.
+on clicking ban/unban, send to BACK END
+Back end sends forward to front end.
+On receive front end, change BOTH temp obj from above AND $scope.allUser!
+
+-NEED TO CHANGE adminpanel toggle to a function, not ternary operator! (since fn needs to update temp object)

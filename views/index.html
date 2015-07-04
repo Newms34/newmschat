@@ -7,7 +7,8 @@
     <link href="/stylesheets/style.css" rel="stylesheet" />
 </head>
 
-<body id="homepage" ng-app='Chat' ng-controller='MainController'>
+<body id="homepage" ng-app='Chat' ng-controller='MainController' ng-element-ready=''>
+    <div id='loadScrn' ng-if='loading==true'></div>
     <div id='chatWindow'>
         <div id='nameBox'>
             <h2>Your name: {{userName}}</h2>
@@ -18,7 +19,7 @@
         </div>
         <input type='text' id='chatInp' ng-class='{chatCmd: commanding==true}' />
         <button type='button' class='btn btn-info' ng-click='speak();'>Speak!</button>
-        <div id='inst'>
+        <div id='inst' ng-if='adminShow==false'>
             <h3>Instructions!</h3>
             <li>Type in box the light green textbox.</li>
             <li>Press enter or click blue button</li>
@@ -38,7 +39,7 @@
                 Users:
                 <div ng-if='allUsers.length<1'>Nobody's online! Hmm... This can't be right!</div>
                 <ul>
-                    <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1 && $index'>{{okayUser}}</li>
+                    <li ng-repeat='okayUser in allUsers' ng-if='blockUser.indexOf(okayUser)==-1'>{{okayUser.user}}</li>
                 </ul>
             </div>
             <div id='blockedUser'>
@@ -49,12 +50,44 @@
                 </ul>
             </div>
         </div>
+        <div id='adminSection' ng-if='adminShow==true'>
+            <div ng-if='loggedIn==false'>Password:
+                <input type='password' id='thePass' ng-model='passAttempt' />
+                <button ng-click='adminLogin()'>Login</button>
+            </div>
+            <div ng-if='loggedIn==true'>
+                <h3>Administrator Tools:</h3>
+                <table class='table table-striped'>
+                    <thead>
+                        <tr class='danger'>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Ban/Unban</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='banUser in tempAdminData'>
+                            <td>{{banUser.user}}</td>
+                            <td ng-if='banUser.banned!=false'>Banned</td>
+                            <td ng-if='banUser.banned==false'>Not Banned</td>
+                            <td ng-if='banUser.banned!=false'>
+                                <button ng-click='banEm(banUser,0);' class='btn btn-info'>Unban</button>
+                            </td>
+                            <td ng-if='banUser.banned==false'>
+                                <button ng-click='banEm(banUser,1);' class='btn btn-danger'>Ban</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <div id='menuIcons'>
         <div class='menuIconToggle' ng-click='(muted)?muted=false:muted=true;'><span ng-if='muted==false'>&#128266;</span><span ng-if='muted==true'>&#128264;</span></div>
         <div class='menuIconToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
+        <div class='menuIconToggle' ng-click='toggleAdmin()'><span ng-if='adminShow==false'>&#128274;</span><span ng-if='adminShow==true'>&#128275;</span></div>
     </div>
-    <div class='updates' ng-class='{updatesSmall: updateShow==false}'>
+    <div class='updates' ng-if='updateShow==true'>
         <br/>
         <u>Latest Updates:</u>
         <ul>
@@ -64,14 +97,17 @@
             <li>Implemented update window.</li>
             <li>Refactored list of online users and list of blocked users</li>
             <li>Chat commands (typing '/') now turns the chatbox blue.</li>
+            <li>/google and /wiki commands now show which command you've entered.</li>
             <li>Chat now will beep when recieving a message from another person. This is mute-able</li>
             <li>Window title will change to indicate unread messages</li>
             <li>Timestamps! (thanks, Jeff!)</li>
+            <li>Banning now somewhat works. The password is '4'. Note that it does not actually ban you at the moment (obviously, I wouldn't be giving out the password if it did!).</li>
         </ul>
         <u>Future Features:</u>
         <ul>
             <li>AFK Timeout system: If user goes afk for a certain amount of time, grey out their name to signify that they might not respond.</li>
             <li>More commands!</li>
+            <li>Ban will redirect to a separate 'you are banned!' page</li>
         </ul>
     </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>

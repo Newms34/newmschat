@@ -42,7 +42,7 @@ app.controller("MainController", function($scope, $window) {
         $scope.oscillator.start ? $scope.oscillator.start(0) : $scope.oscillator.noteOn(0);
         setTimeout(function() {
             $scope.oscillator.disconnect();
-        }, 200)
+        }, 150)
     };
 
     window.onkeyup = function(e) {

@@ -125,12 +125,12 @@ body {
     height:18px;
     text-align: center;
     font-size:large;
-    background-color: #780007;
+    background-color: #229;
     color:#fff;
     cursor:pointer;
 }
 .menuIconToggle:hover{
-    background-color: #b99;
+    background-color: #99b;
 }
 #adminSection{
     padding: 10px;

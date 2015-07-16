@@ -11,3 +11,5 @@ Back end sends forward to front end.
 On receive front end, change BOTH temp obj from above AND $scope.allUser!
 
 -NEED TO CHANGE adminpanel toggle to a function, not ternary operator! (since fn needs to update temp object)
+
+if not focused on main window, do (slightly longer) beep?

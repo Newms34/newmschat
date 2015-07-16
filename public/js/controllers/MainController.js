@@ -1,12 +1,12 @@
 var app = angular.module("Chat", ['ngSanitize']);
-var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy', 'Big Bad', 'Odiferous', 'Sinister'];
-var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle', 'Wolf', 'Beluga', 'Ant', 'Orangutan'];
+var adjs = ['Insidious', 'Merciful', 'Heavenly', 'Woebegone', 'Victorious', 'Itchy', 'Crooked', 'Wise', 'Wiggly', 'August', 'Enormous', 'Fluffy', 'Big Bad', 'Odiferous', 'Sinister','Disembarrassed','Renitent','Demulcent','Lofty','Saturnine','Nefarious'];
+var nouns = ['Ladybug', 'Airplane', 'Dog', 'Cat', 'Chipmunk', 'Potato', 'Snail', 'Horse', 'Iguana', 'Pickle', 'Tyrannosaurus', 'Orangutan', 'Wallaby', 'Aardvark', 'Noodle', 'Wolf', 'Beluga', 'Ant', 'Orangutan','Crow','Bat','Adjutant','Tarantula','Weevil','Paca','Bandicoot','Zebra','Llama','Jaberwocky'];
 
 
 var socket = io();
 
 app.controller("MainController", function($scope, $window) {
-    $scope.userName = adjs[Math.floor(Math.random() * adjs.length)] + ' ' + nouns[Math.floor(Math.random() * nouns.length)];
+    $scope.userName = adjs[Math.floor(Math.random() * adjs.length)] + ' '+adjs[Math.floor(Math.random() * adjs.length)] + ' ' + nouns[Math.floor(Math.random() * nouns.length)];
     $scope.blockUser = [];
     $scope.colCycle = false;
     $scope.els;

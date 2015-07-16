@@ -83,9 +83,9 @@
         </div>
     </div>
     <div id='menuIcons'>
-        <div class='menuIconToggle' ng-click='(muted)?muted=false:muted=true;'><span ng-if='muted==false'>&#128266;</span><span ng-if='muted==true'>&#128264;</span></div>
-        <div class='menuIconToggle' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
-        <div class='menuIconToggle' ng-click='toggleAdmin()'><span ng-if='adminShow==false'>&#128274;</span><span ng-if='adminShow==true'>&#128275;</span></div>
+        <div class='menuIconToggle' title='Mute' ng-click='(muted)?muted=false:muted=true;'><span ng-if='muted==false'>&#128266;</span><span ng-if='muted==true'>&#128264;</span></div>
+        <div class='menuIconToggle' title='Recent Updates' ng-click='(updateShow)?updateShow=false:updateShow=true;'><span ng-if='updateShow==false'>&#128269;</span><span ng-if='updateShow==true'>X</span></div>
+        <div class='menuIconToggle' title='Access Admin Page' ng-click='toggleAdmin()'><span ng-if='adminShow==false'>&#128274;</span><span ng-if='adminShow==true'>&#128275;</span></div>
     </div>
     <div class='updates' ng-if='updateShow==true'>
         <br/>

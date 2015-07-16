@@ -64,14 +64,16 @@ app.controller("MainController", function($scope, $window) {
             console.log(beepArr)
             beepArr.shift();
             console.log(beepArr);
-            if (beepArr.length){
+            if (beepArr.length) {
                 $scope.beep(beepArr);
             }
         }, 75);
     };
 
-    socket.on('discBeep',function(empty){
-        $scope.beep([220,207,195]);
+    socket.on('discBeep', function(empty) {
+        if (!$scope.muted) {
+            $scope.beep([220, 207, 195]);
+        }
     })
 
     window.onkeyup = function(e) {
@@ -233,7 +235,7 @@ app.controller("MainController", function($scope, $window) {
                 }
                 //beep
                 if (!$scope.muted) {
-                    $scope.beep([440,466.164,493.883]);
+                    $scope.beep([440, 466.164, 493.883]);
                 }
             }
         }

@@ -61,7 +61,8 @@ io.on('connection', function(socket) {
                 userName: userUpd.name,
                 userId: userUpd.key,
                 userTimer: 40,
-                userBanned: false
+                userBanned: false,
+                userLastActive: new Date().getTime()
             });
         }
     });
@@ -102,7 +103,6 @@ io.on('connection', function(socket) {
         io.emit('servUserData', {
             list: userList
         });
-        // console.log(outList);
     });
     socket.on('admin', function(pass) {
         console.log(pass.pass);

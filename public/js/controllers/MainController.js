@@ -269,7 +269,8 @@ app.controller("MainController", function($scope, $window) {
     $scope.pingServ = setInterval(function() {
         var userStatObj = {
             name: $scope.userName,
-            key: $scope.uniqId
+            key: $scope.uniqId,
+            time: new Date().getTime()
         };
         socket.emit('pingServ', userStatObj);
         socket.emit('getServUserData', {
@@ -311,7 +312,7 @@ app.controller("MainController", function($scope, $window) {
         });
         socket.emit('chkBan', {
             name: $scope.userName
-        })
+        });
         $scope.$digest();
     });
 
